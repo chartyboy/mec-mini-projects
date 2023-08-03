@@ -29,7 +29,7 @@ Creating a project
 Before you start scraping, you will have to set up a new Scrapy project. Enter a
 directory where you'd like to store your code and run::
 
-    scrapy startproject scrapy-mini-project
+    scrapy startproject scrapy_mini_project
 
 This will create a ``scrapy-mini-project`` directory with the following contents::
 
@@ -348,7 +348,7 @@ like this:
 Let's open up scrapy shell and play a bit to find out how to extract the data
 we want::
 
-    $ scrapy shell 'http://quotes.toscrape.com'
+    $ scrapy shell "http://quotes.toscrape.com"
 
 We get a list of selectors for the quote HTML elements with:
 
