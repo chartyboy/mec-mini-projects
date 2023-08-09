@@ -43,7 +43,7 @@ class QuotesSpider(scrapy.Spider):
     def parse_author(self, response):
         # Get name, birthday, country of origin
         info = response.xpath("//div[@class='author-details']")
-        location = info.xpath(".//span[@class='author-born-location']").get()
+        location = info.xpath(".//span[@class='author-born-location']/text()").get()
         yield {
             "type": "author",
             "data": {
@@ -51,7 +51,7 @@ class QuotesSpider(scrapy.Spider):
                 "birthday": info.xpath(
                     ".//span[@class='author-born-date']/text()"
                 ).get(),
-                "country": location.split(" ")[-1],
+                "country": location.split(", ")[-1],
                 "desc": info.xpath(".//div[@class='author-description']/text()")
                 .get()
                 .strip(" \n"),
@@ -59,13 +59,18 @@ class QuotesSpider(scrapy.Spider):
         }
 
 
-rel_path = r"./scrapy_mini_project/scrapy_mini_project/xpath-scraper-results.json"
+rel_path = r"./scrapy_mini_project/db-results.json"
 if not os.path.exists(rel_path):
-    # Run spider
-    setting = {"FEEDS": {rel_path: {"format": "json"}}}
-    process = CrawlerProcess(settings=setting)
-    process.crawl(QuotesSpider)
-    process.start()
+    if not os.path.exists(os.path.dirname(rel_path)):
+        os.mkdir(os.path.dirname(rel_path))
+else:
+    os.truncate(rel_path, 0)
+
+# Run spider
+setting = {"FEEDS": {rel_path: {"format": "json"}}}
+process = CrawlerProcess(settings=setting)
+process.crawl(QuotesSpider)
+process.start()
 
 with open(rel_path, encoding="utf-8") as f:
     data = json.load(f, encoding="utf-8")
@@ -93,7 +98,7 @@ cur.execute(
     CREATE TABLE IF NOT EXISTS quotes(
         id INTEGER PRIMARY KEY,
         author_id INTEGER,
-        quote TEXT(255) NOT NULL,
+        quote VARCHAR(255) NOT NULL,
         FOREIGN KEY (author_id) REFERENCES authors(auth_id)
     );
     """

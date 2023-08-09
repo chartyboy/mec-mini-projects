@@ -39,7 +39,7 @@ class QuotesSpider(scrapy.Spider):
     def parse_author(self, response):
         # Get name, birthday, country of origin
         info = response.xpath("//div[@class='author-details']")
-        location = info.xpath(".//span[@class='author-born-location']").get()
+        location = info.xpath(".//span[@class='author-born-location']/text()").get()
         yield {
             "type": "author",
             "data": {
@@ -47,7 +47,7 @@ class QuotesSpider(scrapy.Spider):
                 "birthday": info.xpath(
                     ".//span[@class='author-born-date']/text()"
                 ).get(),
-                "country": location.split(" ")[-1],
+                "country": location.split(", ")[-1],
                 "desc": info.xpath(".//div[@class='author-description']/text()")
                 .get()
                 .strip(" \n"),
