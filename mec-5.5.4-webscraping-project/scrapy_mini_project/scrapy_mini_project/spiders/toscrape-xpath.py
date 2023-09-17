@@ -11,6 +11,13 @@ class QuotesSpider(scrapy.Spider):
             url = url + "tag/" + tag
         yield scrapy.Request(url, self.parse)
 
+    @classmethod
+    def update_settings(cls, settings):
+        super().update_settings(settings)
+        # enabled_ext = {"scrapy.extensions.closespider.CloseSpider": 100}
+        # settings.set("EXTENSIONS", {})
+        settings.set("CLOSESPIDER_ITEMCOUNT", 10, priority="spider")
+
     def parse(self, response):
         for quote in response.xpath("//div[@class='quote']"):
             yield {
